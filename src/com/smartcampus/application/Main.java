@@ -42,12 +42,10 @@ public class Main {
         config.getClasses().add(GlobalExceptionMapper.class);
 
         // Logging filter
-        config.getProperties().put(
-                ResourceConfig.PROPERTY_CONTAINER_REQUEST_FILTERS,
-                LoggingFilter.class.getName());
-        config.getProperties().put(
-                ResourceConfig.PROPERTY_CONTAINER_RESPONSE_FILTERS,
-                LoggingFilter.class.getName());
+        config.getClasses().add(LoggingFilter.class);
+
+        // Enable POJO JSON mapping
+        config.getFeatures().put("com.sun.jersey.api.json.POJOMappingFeature", true);
 
         Server server = new Server(PORT);
 
