@@ -1,31 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="SmartCampusAPI" default="default" basedir=".">
-    <description>Smart Campus Sensor and Room Management API - JAX-RS Coursework</description>
+<project name="SmartCampusAPI-CSA" default="run" basedir=".">
+    <description>Smart Campus Sensor and Room Management API</description>
 
-    <import file="${netbeans.home}/../java/ant/nbantext.jar" optional="true"/>
+    <property name="build.classes.dir" value="build/classes"/>
+    <property name="dist.dir"          value="dist"/>
+    <property name="src.dir"           value="src"/>
+    <property name="main.class"        value="com.smartcampus.application.Main"/>
 
-    <target name="-pre-init">
-        <property name="build.classes.dir" value="build/classes"/>
-        <property name="dist.dir"          value="dist"/>
-        <property name="dist.jar"          value="${dist.dir}/SmartCampusAPI.jar"/>
-        <property name="src.dir"           value="src"/>
-        <property name="main.class"        value="com.smartcampus.application.Main"/>
-    </target>
-
-    <!-- Build classpath from all jars in lib/ -->
     <path id="classpath">
         <fileset dir="lib" includes="*.jar"/>
         <pathelement location="${build.classes.dir}"/>
     </path>
 
-    <!-- Clean build artifacts -->
-    <target name="clean" description="Remove build and dist directories">
+    <target name="clean">
         <delete dir="build"/>
         <delete dir="dist"/>
     </target>
 
-    <!-- Compile all sources -->
-    <target name="compile" depends="clean" description="Compile source files">
+    <target name="compile" depends="clean">
         <mkdir dir="${build.classes.dir}"/>
         <javac srcdir="${src.dir}"
                destdir="${build.classes.dir}"
@@ -36,28 +28,17 @@
                includeantruntime="false"/>
     </target>
 
-    <!-- Package into a runnable jar -->
-    <target name="jar" depends="compile" description="Build runnable jar">
-        <mkdir dir="${dist.dir}"/>
-        <jar destfile="${dist.jar}" basedir="${build.classes.dir}">
-            <manifest>
-                <attribute name="Main-Class" value="${main.class}"/>
-                <attribute name="Class-Path" value="${toString:classpath}"/>
-            </manifest>
-        </jar>
-        <echo>Built: ${dist.jar}</echo>
-    </target>
-
-    <!-- Run the application -->
     <target name="run" depends="compile" description="Start the Smart Campus API server">
-        <java classname="${main.class}" classpathref="classpath" fork="true">
+        <java classname="${main.class}" fork="true">
             <classpath>
                 <pathelement location="${build.classes.dir}"/>
                 <fileset dir="lib" includes="*.jar"/>
             </classpath>
+            <jvmarg value="--add-opens=java.base/java.lang=ALL-UNNAMED"/>
+            <jvmarg value="--add-opens=java.base/java.util=ALL-UNNAMED"/>
+            <jvmarg value="--add-modules=java.xml.bind"/>
         </java>
     </target>
 
-    <!-- Default target -->
     <target name="default" depends="run"/>
 </project>

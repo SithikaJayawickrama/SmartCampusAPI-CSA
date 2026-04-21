@@ -171,7 +171,7 @@ public class SensorResource {
     public SensorReadingResource getReadingsResource(@PathParam("sensorId") String sensorId) {
         // Validate sensor exists before delegating
         if (!store.sensorExists(sensorId)) {
-            throw new NotFoundException("Sensor '" + sensorId + "' does not exist.");
+            throw new javax.ws.rs.WebApplicationException(errorResponse(404, "Not Found", "Sensor '" + sensorId + "' does not exist."));
         }
         return new SensorReadingResource(sensorId);
     }

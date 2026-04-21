@@ -1,11 +1,9 @@
 package com.smartcampus.filter;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.ext.Provider;
-import java.io.IOException;
+import com.sun.jersey.spi.container.ContainerRequest;
+import com.sun.jersey.spi.container.ContainerRequestFilter;
+import com.sun.jersey.spi.container.ContainerResponse;
+import com.sun.jersey.spi.container.ContainerResponseFilter;
 import java.util.logging.Logger;
 
 /**
@@ -14,7 +12,9 @@ import java.util.logging.Logger;
  * This single class implements BOTH ContainerRequestFilter (fires when a request
  * arrives) and ContainerResponseFilter (fires just before a response is sent back).
  *
- * The @Provider annotation tells Jersey to register this automatically.
+ * Uses Jersey 1.x native filter APIs (com.sun.jersey.spi.container) which are
+ * compatible with JAX-RS 1.1 (jsr311-api). The JAX-RS 2.0 container filter
+ * interfaces (javax.ws.rs.container.*) are not available in Jersey 1.x.
  *
  * WHY USE A FILTER instead of adding Logger.info() to every resource method?
  *
@@ -41,30 +41,32 @@ import java.util.logging.Logger;
  *   [REQUEST]  POST   http://localhost:8080/api/v1/rooms
  *   [RESPONSE] POST   http://localhost:8080/api/v1/rooms  →  201
  */
-@Provider
 public class LoggingFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
     private static final Logger LOG = Logger.getLogger(LoggingFilter.class.getName());
 
     /**
      * Called when a request arrives — before it reaches the resource method.
+     * Must return the (possibly modified) request to continue the filter chain.
      */
     @Override
-    public void filter(ContainerRequestContext requestContext) throws IOException {
+    public ContainerRequest filter(ContainerRequest request) {
         LOG.info(String.format("[REQUEST]  %-7s %s",
-                requestContext.getMethod(),
-                requestContext.getUriInfo().getRequestUri()));
+                request.getMethod(),
+                request.getRequestUri()));
+        return request;
     }
 
     /**
      * Called just before the response is sent back to the client.
+     * Must return the (possibly modified) response.
      */
     @Override
-    public void filter(ContainerRequestContext requestContext,
-                       ContainerResponseContext responseContext) throws IOException {
-        LOG.info(String.format("[RESPONSE] %-7s %s  →  %d",
-                requestContext.getMethod(),
-                requestContext.getUriInfo().getRequestUri(),
-                responseContext.getStatus()));
+    public ContainerResponse filter(ContainerRequest request, ContainerResponse response) {
+        LOG.info(String.format("[RESPONSE] %-7s %s  \u2192  %d",
+                request.getMethod(),
+                request.getRequestUri(),
+                response.getStatus()));
+        return response;
     }
 }
