@@ -9,6 +9,7 @@ import com.smartcampus.resource.DiscoveryResource;
 import com.smartcampus.resource.RoomResource;
 import com.smartcampus.resource.SensorResource;
 import com.sun.jersey.api.core.DefaultResourceConfig;
+import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -37,8 +38,14 @@ public class Main {
         config.getClasses().add(SensorUnavailableExceptionMapper.class);
         config.getClasses().add(GlobalExceptionMapper.class);
 
-        // Logging filter
-        config.getClasses().add(LoggingFilter.class);
+        // Logging filter — registered via Jersey 1.x property mechanism
+        // (Jersey 1.x does not use JAX-RS 2.0 @Provider-scanning for container filters)
+        config.getProperties().put(
+                ResourceConfig.PROPERTY_CONTAINER_REQUEST_FILTERS,
+                com.smartcampus.filter.LoggingFilter.class.getName());
+        config.getProperties().put(
+                ResourceConfig.PROPERTY_CONTAINER_RESPONSE_FILTERS,
+                com.smartcampus.filter.LoggingFilter.class.getName());
 
         // Enable POJO JSON mapping
         config.getFeatures().put("com.sun.jersey.api.json.POJOMappingFeature", true);

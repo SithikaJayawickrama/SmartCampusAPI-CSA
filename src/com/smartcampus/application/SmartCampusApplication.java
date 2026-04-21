@@ -1,20 +1,19 @@
 package com.smartcampus.application;
 
-import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 /**
  * JAX-RS Application entry point.
  *
- * @ApplicationPath("/api/v1") sets the base URL for the entire API.
- * Every @Path annotation in resource classes is relative to this base.
+ * Note: @ApplicationPath is a JAX-RS 2.0 annotation and is not available
+ * in Jersey 1.x (JAX-RS 1.1). The servlet base path "/api/v1" is configured
+ * directly in Main.java via the Jetty ServletContextHandler.
  *
  * Example: @Path("/rooms") in RoomResource becomes /api/v1/rooms
  *
- * By leaving the class body empty, Jersey automatically scans the entire
- * classpath for @Path and @Provider annotated classes and registers them.
+ * This class is retained for reference only. All resource registration
+ * is handled manually in Main.java using DefaultResourceConfig.
  */
-@ApplicationPath("/api/v1")
 public class SmartCampusApplication extends Application {
-    // Empty — Jersey auto-discovers all resource and provider classes
+    // Empty — resources are manually registered in Main.java
 }
