@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="SmartCampusAPI" default="run" basedir=".">
+    <description>Smart Campus Sensor and Room Management API - 5COSC022W</description>
+
+    <property name="build.classes.dir" value="build/classes"/>
+    <property name="src.dir"           value="src"/>
+    <property name="main.class"        value="com.smartcampus.application.Main"/>
+
+    <path id="classpath">
+        <fileset dir="lib" includes="*.jar"/>
+        <pathelement location="${build.classes.dir}"/>
+    </path>
+
+    <target name="clean">
+        <delete dir="build"/>
+        <delete dir="dist"/>
+    </target>
+
+    <target name="compile" depends="clean">
+        <mkdir dir="${build.classes.dir}"/>
+        <javac srcdir="${src.dir}"
+               destdir="${build.classes.dir}"
+               classpathref="classpath"
+               source="11" target="11"
+               encoding="UTF-8"
+               includeantruntime="false"/>
+    </target>
+
+    <target name="run" depends="compile" description="Start the Smart Campus API">
+        <java classname="${main.class}" fork="true">
+            <classpath>
+                <pathelement location="${build.classes.dir}"/>
+                <fileset dir="lib" includes="*.jar"/>
+            </classpath>
+            <jvmarg value="--add-opens=java.base/java.lang=ALL-UNNAMED"/>
+            <jvmarg value="--add-opens=java.base/java.util=ALL-UNNAMED"/>
+        </java>
+    </target>
+
+    <target name="default" depends="run"/>
+</project>
